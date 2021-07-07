@@ -2,23 +2,27 @@
 
 require_relative 'validation_error'
 
-# Returns the value from convert_input
-# validate must raise ValidationError with custom message or StandardError without message if input is not valid.
-#   Raise ValidationError with helpful explanation (message) to prefix original prompt with custom message.
+# Returns the value from options[:convert_input]
+# options[:validate]: if input is invalid, raise ValidationError with custom message or StandardError without message.
+#   Raise ValidationError with helpful explanation (message) to prefix original.
 def prompt_until_valid(
-  prompt,
-  get_input: -> { gets.chomp },
-  convert_input: ->(input) { input },
-  validate: ->(_input_converted) { nil }
+  message,
+  options: {
+    prompt_with_format: ->(msg) { puts "-> #{msg}" },
+    input_invalid_default_message: 'Invalid input.',
+    get_input: -> { gets.chomp },
+    convert_input: ->(input) { input },
+    validate: ->(_input_converted) { nil }
+  }
 )
-  prompt(prompt)
+  options[:prompt_with_format].call(message)
   loop do
-    value = convert_input.call(get_input.call)
-    validate.call(value)
+    value = options[:convert_input].call(options[:get_input].call)
+    options[:validate].call(value)
     break value
   rescue ValidationError => e
-    prompt("#{e.message} #{prompt}")
+    options[:prompt_with_format].call("#{e.message} #{message}")
   rescue StandardError
-    prompt("#{MESSAGES['input_invalid_message']} #{prompt}")
+    options[:prompt_with_format].call("#{options[:input_invalid_default_message]} #{message}")
   end
 end
