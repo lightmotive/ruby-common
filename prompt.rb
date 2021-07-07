@@ -2,7 +2,7 @@
 
 require_relative 'validation_error'
 
-# NOTE: prompt_until_valid should be a class. Will learn that and refactor later.
+# NOTE: prompt_until_valid should be a class. Will learn Ruby OOP and refactor later.
 
 # Returns the value from options[:convert_input]
 # options[:validate]: if input is invalid, raise ValidationError with custom message or StandardError without message.
