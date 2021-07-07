@@ -3,7 +3,7 @@
 require_relative 'validation_error'
 
 # Returns the value from convert_input
-# validate must raise an exception if input is not valid.
+# validate must raise ValidationError with custom message or StandardError without message if input is not valid.
 #   Raise ValidationError with helpful explanation (message) to prefix original prompt with custom message.
 def prompt_until_valid(
   prompt,
