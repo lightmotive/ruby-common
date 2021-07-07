@@ -9,7 +9,7 @@ def prompt_until_valid(
   prompt,
   get_input: -> { gets.chomp },
   convert_input: ->(input) { input },
-  validate: ->(_value) { nil }
+  validate: ->(_input_converted) { nil }
 )
   prompt(prompt)
   loop do
