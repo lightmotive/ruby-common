@@ -41,13 +41,8 @@ def calculate_speed_difference(faster_details, slower_details)
   (slower_average - faster_average) / slower_average
 end
 
-# [Implementation label a] was the fastest by p%.
-#
-# [Implementation label a] completed p% (x seconds) faster than [Implementation label b].
-# [Implementation label b] completed p% (x seconds) faster than [Implementation label c].
-
 def report_format_single(detail)
-  format('%<label>s completed in %<time>.4fs.',
+  format('%<label>s completed in %<time>.6fs.',
          label: detail[:label],
          time: detail[:average_seconds])
 end
@@ -59,13 +54,13 @@ def report_format_fastest(detail_fastest, detail_next_fastest)
 end
 
 def report_format_comparison(detail_faster, detail_slower)
-  format('"%<faster_label>s" was faster than "%<slower_label>s" by about %<speed_difference>.0f%% ' \
-    '(average %<first_time>.4fs vs %<second_time>.4fs).',
+  format('"%<faster_label>s" was %<speed_difference>.0f%% faster than "%<slower_label>s" ' \
+         '(average %<first_time>.6fs vs %<second_time>.6fs).',
          faster_label: detail_faster[:label],
+         speed_difference: calculate_speed_difference(detail_faster, detail_slower) * 100,
          slower_label: detail_slower[:label],
          first_time: detail_faster[:average_seconds],
-         second_time: detail_slower[:average_seconds],
-         speed_difference: calculate_speed_difference(detail_faster, detail_slower) * 100)
+         second_time: detail_slower[:average_seconds])
 end
 
 def print_fastest(details)
