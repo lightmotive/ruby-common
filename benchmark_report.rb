@@ -38,7 +38,7 @@ def calculate_speed_difference(faster_details, slower_details)
   faster_average = faster_details[:average_seconds]
   slower_average = slower_details[:average_seconds]
 
-  (slower_average - faster_average) / slower_average
+  (slower_average - faster_average) / faster_average
 end
 
 def report_format_single(detail)
