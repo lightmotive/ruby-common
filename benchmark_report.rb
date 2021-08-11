@@ -56,7 +56,7 @@ def report_format_fastest(detail_fastest, detail_next_fastest)
 end
 
 def report_format_comparison(detail_faster, detail_slower)
-  format('"%<faster_label>s" ran at %<speed_difference>.3fx the speed of "%<slower_label>s" ' \
+  format('"%<faster_label>s" ran %<speed_difference>.3fx faster than "%<slower_label>s" ' \
          '(average %<first_time>.6fs vs %<second_time>.6fs).',
          faster_label: detail_faster[:label],
          speed_difference: calculate_speed_ratio(detail_faster, detail_slower),
