@@ -34,11 +34,12 @@ def build_details(implementation, runs)
   details
 end
 
-def calculate_speed_difference(faster_details, slower_details)
+# Calculate how many runs would execute in the same time of the next-fastest run.
+def calculate_speed_ratio(faster_details, slower_details)
   faster_average = faster_details[:average_seconds]
   slower_average = slower_details[:average_seconds]
 
-  (slower_average - faster_average) / faster_average
+  slower_average / faster_average
 end
 
 def report_format_single(detail)
@@ -48,16 +49,17 @@ def report_format_single(detail)
 end
 
 def report_format_fastest(detail_fastest, detail_next_fastest)
-  format('"%<fastest_label>s" was the fastest by %<speed_difference>.0f%%.',
+  format('"%<fastest_label>s" ran the fastest at %<speed_difference>.3fx the speed of "%<next_fastest_label>s".',
          fastest_label: detail_fastest[:label],
-         speed_difference: calculate_speed_difference(detail_fastest, detail_next_fastest) * 100)
+         next_fastest_label: detail_next_fastest[:label],
+         speed_difference: calculate_speed_ratio(detail_fastest, detail_next_fastest))
 end
 
 def report_format_comparison(detail_faster, detail_slower)
-  format('"%<faster_label>s" was %<speed_difference>.0f%% faster than "%<slower_label>s" ' \
+  format('"%<faster_label>s" ran at %<speed_difference>.3fx the speed of "%<slower_label>s" ' \
          '(average %<first_time>.6fs vs %<second_time>.6fs).',
          faster_label: detail_faster[:label],
-         speed_difference: calculate_speed_difference(detail_faster, detail_slower) * 100,
+         speed_difference: calculate_speed_ratio(detail_faster, detail_slower),
          slower_label: detail_slower[:label],
          first_time: detail_faster[:average_seconds],
          second_time: detail_slower[:average_seconds])
