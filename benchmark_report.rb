@@ -5,22 +5,22 @@
 
 require 'benchmark'
 
-def benchmark_implementation(benchmark, iterations_per_run, test_data, implementation)
+def benchmark_implementation(benchmark, iterations_per_run, tests, implementation)
   implementation.default = 0.0
   implementation[:total_seconds] += benchmark.report(implementation[:label]) do
     iterations_per_run.times do
-      test_data.each do |_, data|
-        implementation[:method].call(data[:input])
+      tests.each do |test|
+        implementation[:method].call(test[:input])
       end
     end
   end.total
 end
 
-def benchmark_implementations(iterations_per_run, test_data, implementations)
+def benchmark_implementations(iterations_per_run, tests, implementations)
   labels = implementations.map { |implementation| implementation.fetch(:label) }
   Benchmark.bm(labels.max { |a, b| a.length <=> b.length }.length) do |benchmark|
     implementations.each do |implementation|
-      benchmark_implementation(benchmark, iterations_per_run, test_data, implementation)
+      benchmark_implementation(benchmark, iterations_per_run, tests, implementation)
     end
   end
 end
@@ -90,13 +90,13 @@ def report_comparison(implementations, runs)
   print_comparison_overview(details) if details.size > 1
 end
 
-# test_data structure: { label: { input: ..., expected_output: ... }, ... }
+# tests structure: [ { label: 'Test label', input: ..., expected_output: ... }, ... ]
 # implementations structure: [ { label: 'Implementation label...', method: ->(input) { expected_output } }, ... ]
-def benchmark_report(runs, iterations_per_run, test_data, implementations)
+def benchmark_report(runs, iterations_per_run, tests, implementations)
   puts "\nBenchmark comparison of #{runs} runs of #{iterations_per_run} test data iterations, averaged by runs...\n\n"
 
   runs.times do
-    benchmark_implementations(iterations_per_run, test_data, implementations)
+    benchmark_implementations(iterations_per_run, tests, implementations)
   end
 
   puts
