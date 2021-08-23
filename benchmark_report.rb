@@ -102,9 +102,3 @@ def benchmark_report(runs, iterations_per_run, tests, implementations)
   puts
   report_comparison(implementations, runs)
 end
-
-def run_tests(tests, callback)
-  tests.each do |test|
-    puts "#{test[:label]}: #{callback.call(test[:input]) == test[:expected_output]}"
-  end
-end
