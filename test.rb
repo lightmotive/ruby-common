@@ -11,5 +11,5 @@ def run_tests(test_group_name, tests, callback)
   end
 end
 
-run_tests('name', [{ label: 'Labeled', input: 1, expected_output: 1 },
-                   { input: 2, expected_output: 2 }], ->(input) { input })
+# run_tests('name', [{ label: 'Labeled', input: 1, expected_output: 1 },
+#                    { input: 2, expected_output: 2 }], ->(input) { input })
