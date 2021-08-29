@@ -13,7 +13,7 @@ def benchmark_implementation(benchmark, iterations_per_run, tests, implementatio
         implementation[:method].call(test[:input])
       end
     end
-  end.total
+  end.real
 end
 
 def benchmark_implementations(iterations_per_run, tests, implementations)
