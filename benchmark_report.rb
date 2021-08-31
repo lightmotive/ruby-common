@@ -82,12 +82,20 @@ def print_comparison_overview(details)
   end
 end
 
+def print_fastest_slowest_comparison(details)
+  puts '-- Fastest : Slowest --'
+  puts report_format_comparison(details[0], details[-1])
+end
+
 def report_comparison(implementations, runs)
   implementations = implementations.sort_by { |implementation| implementation[:total_seconds] }
   details = implementations.map { |implementation| build_details(implementation, runs) }
 
   print_fastest(details) unless details.size.zero?
-  print_comparison_overview(details) if details.size > 1
+  if details.size > 1
+    print_comparison_overview(details)
+    print_fastest_slowest_comparison(details)
+  end
 end
 
 # tests structure: [ { label: 'Test label', input: ..., expected_output: ... }, ... ]
