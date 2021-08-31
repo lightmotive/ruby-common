@@ -110,3 +110,12 @@ def benchmark_report(runs, iterations_per_run, tests, implementations)
   puts
   report_comparison(implementations, runs)
 end
+
+def benchmark_report_test_data(runs, iterations_per_run, tests, method)
+  implementations = tests.map.with_index do |_, idx|
+    { label: tests[idx][:label], method: ->(test_data) { method.call(test_data[idx][:input]) } }
+  end
+  tests_for_method = [label: 'TESTS passthrough', input: tests, expected_output: 'N/A']
+
+  benchmark_report(runs, iterations_per_run, tests_for_method, implementations)
+end
