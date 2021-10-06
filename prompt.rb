@@ -42,3 +42,14 @@ def prompt_until_valid(
   options[:prompt_with_format].call(message)
   _prompt_until_valid_loop(message, options)
 end
+
+def prompt_yes_or_no(message)
+  prompt_until_valid(
+    "#{message} (Y/N)",
+    get_input: -> { gets.strip },
+    convert_input: ->(input) { input.downcase },
+    validate: lambda do |input|
+      raise ValidationError, 'Please enter either Y for yes or N for no.' unless %w[y n].include?(input)
+    end
+  )
+end
