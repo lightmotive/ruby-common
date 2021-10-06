@@ -18,7 +18,7 @@ end
 def _prompt_until_valid_loop(message, options)
   loop do
     value = options[:convert_input].call(options[:get_input].call)
-    options[:validate].call(value)
+    options[:validate]&.call(value)
     break value
   rescue ValidationError => e
     options[:prompt_with_format].call("#{e.message} #{message}")
