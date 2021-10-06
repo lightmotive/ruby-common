@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+def display_empty_line
+  puts
+end
+
 def messages_bordered_display(messages, border_char, header: '')
   messages = [messages] unless messages.is_a?(Array)
 
