@@ -54,10 +54,15 @@ def prompt_yes_or_no(message)
   )
 end
 
-def clear_screen
+def clear_console
   system('clear')
-
-  # A cross-platform way to clear the screen:
-  # require 'io/console'
-  # $stdout.clear_screen
 end
+
+# A cross-platform way to clear the screen, which isn't the same as clearing
+# the console (this will clear the current console screen space, leaving what's
+# outside the screen in place so user could scroll up):
+# ** Ruby v2.7+ required **
+# require 'io/console'
+# def clear_screen
+#   $stdout.clear_screen
+# end
