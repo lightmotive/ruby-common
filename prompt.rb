@@ -53,3 +53,11 @@ def prompt_yes_or_no(message)
     end
   )
 end
+
+def clear_screen
+  system('clear')
+
+  # A cross-platform way to clear the screen:
+  # require 'io/console'
+  # $stdout.clear_screen
+end
