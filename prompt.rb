@@ -10,7 +10,7 @@ require_relative 'validation_error'
 def prompt_until_valid_apply_default_options!(options)
   options[:prompt_with_format] ||= ->(msg) { puts "-> #{msg}" }
   options[:input_invalid_default_message] ||= 'Invalid input.'
-  options[:get_input] ||= -> { gets.chomp }
+  options[:get_input] ||= -> { gets.strip }
   options[:convert_input] ||= ->(input) { input }
   options[:validate] ||= ->(_input_converted) { nil }
 end
