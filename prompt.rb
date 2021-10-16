@@ -54,6 +54,11 @@ def prompt_yes_or_no(message)
   )
 end
 
+def prompt_enter_to_continue(message)
+  puts message
+  gets
+end
+
 def clear_console
   system('clear')
 end
