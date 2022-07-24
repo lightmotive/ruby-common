@@ -92,10 +92,10 @@ def report_comparison(implementations, runs)
   details = implementations.map { |implementation| build_details(implementation, runs) }
 
   print_fastest(details) unless details.size.zero?
-  if details.size > 1
-    print_comparison_overview(details)
-    print_fastest_slowest_comparison(details)
-  end
+  return if details.size <= 1
+
+  print_comparison_overview(details)
+  print_fastest_slowest_comparison(details)
 end
 
 # tests structure: [ { label: 'Test label', input: ..., expected_output: ... }, ... ]
