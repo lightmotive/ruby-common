@@ -96,20 +96,21 @@ end
 
 # tests structure: [ { label: 'Test label', input: ..., expected_output: ... }, ... ]
 # implementations structure: [ { label: 'Implementation label...', method: ->(input) { expected_output } }, ... ]
-def benchmark_report(iterations, tests, implementations)
-  puts "\nBenchmark comparison after rehearsal; #{iterations} iterations...\n\n"
+def benchmark_report(tests, implementations, iterations: 1)
+  puts "\nBenchmark comparison of total time (CPU + System) after a rehearsal."
+  puts "Each iteration is run #{iterations} #{iterations == 1 ? 'time' : 'times'}...\n\n"
 
   results = benchmark_implementations(iterations, tests, implementations)
   results.each do |result|
     implementation = implementations.select { |i| i[:label] == result.label }.first
-    implementation[:total_seconds] += result.real
+    implementation[:total_seconds] += result.total
   end
 
   puts
   report_comparison(implementations)
 end
 
-def benchmark_report_test_data(iterations, tests, method)
+def benchmark_report_test_data(tests, method, iterations: 1)
   implementations = tests.map.with_index do |_, idx|
     { label: tests[idx][:label], method: ->(test_data) { method.call(test_data[idx][:input]) } }
   end
