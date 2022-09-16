@@ -5,39 +5,35 @@
 
 require 'benchmark'
 
-def benchmark_implementation(benchmark, iterations_per_run, tests, implementation)
+def benchmark_implementation(benchmark, iterations, tests, implementation)
   implementation.default = 0.0
-  implementation[:total_seconds] += benchmark.report(implementation[:label]) do
-    iterations_per_run.times do
+  benchmark.report(implementation[:label]) do
+    iterations.times do
       tests.each do |test|
         implementation[:method].call(test[:input])
       end
     end
-  end.real
+  end
 end
 
-def benchmark_implementations(iterations_per_run, tests, implementations)
+def benchmark_implementations(iterations, tests, implementations)
   labels = implementations.map { |implementation| implementation.fetch(:label) }
-  Benchmark.bm(labels.max { |a, b| a.length <=> b.length }.length) do |benchmark|
+  Benchmark.bmbm(labels.max { |a, b| a.length <=> b.length }.length) do |benchmark|
     implementations.each do |implementation|
-      benchmark_implementation(benchmark, iterations_per_run, tests, implementation)
+      benchmark_implementation(benchmark, iterations, tests, implementation)
     end
   end
 end
 
-def build_details(implementation, runs)
-  details = { label: implementation[:label], total_seconds: 0.0, average_seconds: 0.0 }
-
+def build_details(implementation)
+  details = { label: implementation[:label], total_seconds: 0.0 }
   details[:total_seconds] = implementation[:total_seconds]
-  details[:average_seconds] = implementation[:total_seconds] / runs.to_f
-
   details
 end
 
-# Calculate how many runs would execute in the same time of the next-fastest run.
 def calculate_speed_ratio(faster_details, slower_details)
-  faster_average = faster_details[:average_seconds]
-  slower_average = slower_details[:average_seconds]
+  faster_average = faster_details[:total_seconds]
+  slower_average = slower_details[:total_seconds]
 
   slower_average / faster_average
 end
@@ -45,7 +41,7 @@ end
 def report_format_single(detail)
   format('%<label>s completed in %<time>.6fs.',
          label: detail[:label],
-         time: detail[:average_seconds])
+         time: detail[:total_seconds])
 end
 
 def report_format_fastest(detail_fastest, detail_next_fastest)
@@ -61,8 +57,8 @@ def report_format_comparison(detail_faster, detail_slower)
          faster_label: detail_faster[:label],
          speed_difference: calculate_speed_ratio(detail_faster, detail_slower),
          slower_label: detail_slower[:label],
-         first_time: detail_faster[:average_seconds],
-         second_time: detail_slower[:average_seconds])
+         first_time: detail_faster[:total_seconds],
+         second_time: detail_slower[:total_seconds])
 end
 
 def print_fastest(details)
@@ -87,9 +83,9 @@ def print_fastest_slowest_comparison(details)
   puts report_format_comparison(details[0], details[-1])
 end
 
-def report_comparison(implementations, runs)
+def report_comparison(implementations)
   implementations = implementations.sort_by { |implementation| implementation[:total_seconds] }
-  details = implementations.map { |implementation| build_details(implementation, runs) }
+  details = implementations.map { |implementation| build_details(implementation) }
 
   print_fastest(details) unless details.size.zero?
   return if details.size <= 1
@@ -100,22 +96,24 @@ end
 
 # tests structure: [ { label: 'Test label', input: ..., expected_output: ... }, ... ]
 # implementations structure: [ { label: 'Implementation label...', method: ->(input) { expected_output } }, ... ]
-def benchmark_report(runs, iterations_per_run, tests, implementations)
-  puts "\nBenchmark comparison of #{runs} runs of #{iterations_per_run} test data iterations, averaged by runs...\n\n"
+def benchmark_report(iterations, tests, implementations)
+  puts "\nBenchmark comparison after rehearsal; #{iterations} iterations...\n\n"
 
-  runs.times do
-    benchmark_implementations(iterations_per_run, tests, implementations)
+  results = benchmark_implementations(iterations, tests, implementations)
+  results.each do |result|
+    implementation = implementations.select { |i| i[:label] == result.label }.first
+    implementation[:total_seconds] += result.real
   end
 
   puts
-  report_comparison(implementations, runs)
+  report_comparison(implementations)
 end
 
-def benchmark_report_test_data(runs, iterations_per_run, tests, method)
+def benchmark_report_test_data(iterations, tests, method)
   implementations = tests.map.with_index do |_, idx|
     { label: tests[idx][:label], method: ->(test_data) { method.call(test_data[idx][:input]) } }
   end
   tests_for_method = [label: 'TESTS passthrough', input: tests, expected_output: 'N/A']
 
-  benchmark_report(runs, iterations_per_run, tests_for_method, implementations)
+  benchmark_report(iterations, tests_for_method, implementations)
 end
