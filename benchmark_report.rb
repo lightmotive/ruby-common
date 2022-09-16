@@ -19,7 +19,7 @@ end
 def benchmark_implementations(iterations, tests, implementations)
   labels = implementations.map { |implementation| implementation.fetch(:label) }
   Benchmark.bmbm(labels.max { |a, b| a.length <=> b.length }.length) do |benchmark|
-    implementations.each do |implementation|
+    implementations.shuffle.each do |implementation|
       benchmark_implementation(benchmark, iterations, tests, implementation)
     end
   end
